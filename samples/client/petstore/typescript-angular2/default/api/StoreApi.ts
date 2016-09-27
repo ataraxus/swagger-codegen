@@ -32,7 +32,6 @@ import 'rxjs/add/operator/map';
 
 import * as models                                           from '../model/models';
 import { BASE_PATH }                                         from '../variables';
-import { Configuration }                                     from '../configuration';
 
 /* tslint:disable:no-unused-variable member-ordering */
 
@@ -41,14 +40,10 @@ import { Configuration }                                     from '../configurat
 export class StoreApi {
     protected basePath = 'http://petstore.swagger.io/v2';
     public defaultHeaders: Headers = new Headers();
-    public configuration: Configuration = new Configuration();
 
-    constructor(protected http: Http, @Optional()@Inject(BASE_PATH) basePath: string, @Optional() configuration: Configuration) {
+    constructor(protected http: Http, @Optional()@Inject(BASE_PATH) basePath: string) {
         if (basePath) {
             this.basePath = basePath;
-        }
-        if (configuration) {
-            this.configuration = configuration;
         }
     }
 
@@ -58,70 +53,6 @@ export class StoreApi {
      * @param orderId ID of the order that needs to be deleted
      */
     public deleteOrder(orderId: string, extraHttpRequestParams?: any): Observable<{}> {
-        return this.deleteOrderWithHttpInfo(orderId, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json();
-                }
-            });
-    }
-
-    /**
-     * Returns pet inventories by status
-     * Returns a map of status codes to quantities
-     */
-    public getInventory(extraHttpRequestParams?: any): Observable<{ [key: string]: number; }> {
-        return this.getInventoryWithHttpInfo(extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json();
-                }
-            });
-    }
-
-    /**
-     * Find purchase order by ID
-     * For valid response try integer IDs with value &lt;&#x3D; 5 or &gt; 10. Other values will generated exceptions
-     * @param orderId ID of pet that needs to be fetched
-     */
-    public getOrderById(orderId: string, extraHttpRequestParams?: any): Observable<models.Order> {
-        return this.getOrderByIdWithHttpInfo(orderId, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json();
-                }
-            });
-    }
-
-    /**
-     * Place an order for a pet
-     * 
-     * @param body order placed for purchasing the pet
-     */
-    public placeOrder(body?: models.Order, extraHttpRequestParams?: any): Observable<models.Order> {
-        return this.placeOrderWithHttpInfo(body, extraHttpRequestParams)
-            .map((response: Response) => {
-                if (response.status === 204) {
-                    return undefined;
-                } else {
-                    return response.json();
-                }
-            });
-    }
-
-
-    /**
-     * Delete purchase order by ID
-     * For valid response try integer IDs with value &lt; 1000. Anything above 1000 or nonintegers will generate API errors
-     * @param orderId ID of the order that needs to be deleted
-     */
-    public deleteOrderWithHttpInfo(orderId: string, extraHttpRequestParams?: any): Observable<Response> {
         const path = this.basePath + `/store/order/${orderId}`;
 
         let queryParameters = new URLSearchParams();
@@ -141,8 +72,7 @@ export class StoreApi {
             'application/json', 
             'application/xml'
         ];
-        
-            
+
 
 
 
@@ -153,14 +83,21 @@ export class StoreApi {
             responseType: ResponseContentType.Json
         });
 
-        return this.http.request(path, requestOptions);
+        return this.http.request(path, requestOptions)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json();
+                }
+            });
     }
 
     /**
      * Returns pet inventories by status
      * Returns a map of status codes to quantities
      */
-    public getInventoryWithHttpInfo(extraHttpRequestParams?: any): Observable<Response> {
+    public getInventory(extraHttpRequestParams?: any): Observable<{ [key: string]: number; }> {
         const path = this.basePath + `/store/inventory`;
 
         let queryParameters = new URLSearchParams();
@@ -176,13 +113,7 @@ export class StoreApi {
             'application/json', 
             'application/xml'
         ];
-        
-        // authentication (api_key) required
-        if (this.configuration.apiKey)
-        {
-            headers.set('api_key', this.configuration.apiKey);
-        }
-            
+
 
 
 
@@ -193,7 +124,14 @@ export class StoreApi {
             responseType: ResponseContentType.Json
         });
 
-        return this.http.request(path, requestOptions);
+        return this.http.request(path, requestOptions)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json();
+                }
+            });
     }
 
     /**
@@ -201,7 +139,7 @@ export class StoreApi {
      * For valid response try integer IDs with value &lt;&#x3D; 5 or &gt; 10. Other values will generated exceptions
      * @param orderId ID of pet that needs to be fetched
      */
-    public getOrderByIdWithHttpInfo(orderId: string, extraHttpRequestParams?: any): Observable<Response> {
+    public getOrderById(orderId: string, extraHttpRequestParams?: any): Observable<models.Order> {
         const path = this.basePath + `/store/order/${orderId}`;
 
         let queryParameters = new URLSearchParams();
@@ -221,8 +159,7 @@ export class StoreApi {
             'application/json', 
             'application/xml'
         ];
-        
-            
+
 
 
 
@@ -233,7 +170,14 @@ export class StoreApi {
             responseType: ResponseContentType.Json
         });
 
-        return this.http.request(path, requestOptions);
+        return this.http.request(path, requestOptions)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json();
+                }
+            });
     }
 
     /**
@@ -241,7 +185,7 @@ export class StoreApi {
      * 
      * @param body order placed for purchasing the pet
      */
-    public placeOrderWithHttpInfo(body?: models.Order, extraHttpRequestParams?: any): Observable<Response> {
+    public placeOrder(body?: models.Order, extraHttpRequestParams?: any): Observable<models.Order> {
         const path = this.basePath + `/store/order`;
 
         let queryParameters = new URLSearchParams();
@@ -257,8 +201,7 @@ export class StoreApi {
             'application/json', 
             'application/xml'
         ];
-        
-            
+
 
         headers.set('Content-Type', 'application/json');
 
@@ -271,7 +214,14 @@ export class StoreApi {
             responseType: ResponseContentType.Json
         });
 
-        return this.http.request(path, requestOptions);
+        return this.http.request(path, requestOptions)
+            .map((response: Response) => {
+                if (response.status === 204) {
+                    return undefined;
+                } else {
+                    return response.json();
+                }
+            });
     }
 
 }
